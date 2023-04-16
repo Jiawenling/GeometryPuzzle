@@ -26,11 +26,14 @@
 
   <ItemGroup>
     <None Remove="ShapeGenerator\" />
+    <None Remove="PolygonUtility.Test\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ShapeGenerator\" />
+    <Folder Include="PolygonUtility.Test\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeometryPuzzleApp\GeometryPuzzleApp.csproj" />
+    <ProjectReference Include="..\PolygonUtility\PolygonUtility.csproj" />
   </ItemGroup>
 </Project>

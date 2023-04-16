@@ -8,16 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Interfaces\" />
-    <None Remove="ShapeGenerators\" />
+    <None Remove="IntersectionCheckUtility\" />
     <None Remove="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="ShapeGenerators\" />
+    <Folder Include="Utils\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PolygonUtility\PolygonUtility.csproj" />
+    <PackageReference Include="C5" Version="2.5.3" />
   </ItemGroup>
 </Project>
