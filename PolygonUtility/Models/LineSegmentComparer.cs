@@ -1,15 +1,15 @@
 ﻿using System;
 namespace PolygonUtility.Models
 {
-	public class LineSegmentComparer: IComparer<LineSegment>
+	public class LineSegmentComparer: Comparer<LineSegment>
 	{
-        public int Compare(LineSegment A, LineSegment B)
+        public override int Compare(LineSegment A, LineSegment B)
         {
             Point a = A.Start;
             Point b = B.Start;
             if (a.Y.CompareTo(b.Y) != 0) return a.Y.CompareTo(b.Y);
-            if (a.CurrentPointNo.CompareTo(b.CurrentPointNo) != 0)
-                return a.CurrentPointNo.CompareTo(b.CurrentPointNo);
+            if (A.CurrentLineNo.CompareTo(B.CurrentLineNo) != 0)
+                return A.CurrentLineNo.CompareTo(B.CurrentLineNo);
             return 0;
         }
     }

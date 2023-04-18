@@ -4,7 +4,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PolygonUtility.Utils
 {
-	public class IntersectionCheckUtil
+	public class LinesegmentUtil
 	{
 
         public Event DoLinesIntersect(LineSegment line1, LineSegment line2)
@@ -19,10 +19,10 @@ namespace PolygonUtility.Utils
 
         private Event CheckIntersect(Point p1, Point p2, Point p3, Point p4)
         {
-            int d1 = Direction(p3, p4, p1);
-            int d2 = Direction(p3, p4, p2);
-            int d3 = Direction(p1, p2, p3);
-            int d4 = Direction(p1, p2, p4);
+            int d1 = GetDirection(p3, p4, p1);
+            int d2 = GetDirection(p3, p4, p2);
+            int d3 = GetDirection(p1, p2, p3);
+            int d4 = GetDirection(p1, p2, p4);
 
             if (d1 != d2 && d3 != d4) return FindIntersectionPoint(p1,p2,p3,p4);
 
@@ -51,14 +51,14 @@ namespace PolygonUtility.Utils
         }
 
 
-        public static int Direction(Point p, Point q, Point r)
+        public int GetDirection(Point a, Point b, Point p)
         {
-            float val = (q.Y - p.Y) * (r.X - q.X) -
-                    (q.X - p.X) * (r.Y - q.Y);
+            //float val = (q.Y - p.Y) * (r.X - q.X) -
+            //        (q.X - p.X) * (r.Y - q.Y);
+            float val = (b.X - a.X) * (p.Y - a.Y) - (b.Y - a.Y) * (p.X - a.X);
+            if (val == 0) return 0; 
 
-            if (val == 0) return 0; // collinear
-
-            return val > 0 ? 1 : 2; // clock or counterclock wise
+            return val > 0 ? 1 : 2; //+ve p is left
         }
 
         public bool IsOnSegment(Point p1, Point p2, Point q, out Event? intersectionPoint)
@@ -73,7 +73,7 @@ namespace PolygonUtility.Utils
             return false;
         }
 
-        public static Event FindIntersectionPoint(Point p1, Point p2, Point p3, Point p4)
+        public Event FindIntersectionPoint(Point p1, Point p2, Point p3, Point p4)
         {
             bool line1IsVertical = IsVerticalLine(p1, p2);
             bool line2IsVertical = IsVerticalLine(p3, p4);
@@ -106,12 +106,12 @@ namespace PolygonUtility.Utils
             }
         }
 
-        public static float FindGradient(Point p1, Point p2)
+        public float FindGradient(Point p1, Point p2)
         {
             return (p1.Y - p2.Y) / (p1.X - p2.X);
         }
 
-        public static bool IsVerticalLine(Point p1, Point p2)
+        public bool IsVerticalLine(Point p1, Point p2)
         {
             return p1.X == p2.X;
         }

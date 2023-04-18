@@ -5,12 +5,12 @@ using PolygonUtility.Utils;
 
 namespace GeometryPuzzleApp.Test.PolygonUtility.Test
 {
-	public class IntersectionCheckUtilTest
+	public class LineSegmentUtilTest
 	{
-		private IntersectionCheckUtil _util;
-		public IntersectionCheckUtilTest()
+		private LinesegmentUtil _util;
+		public LineSegmentUtilTest()
 		{
-			_util = new IntersectionCheckUtil();
+			_util = new LinesegmentUtil();
 		}
 
 		[Fact]
