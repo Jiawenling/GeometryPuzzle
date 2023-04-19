@@ -1,4 +1,11 @@
 ﻿using System;
+using FluentAssertions;
+using GeometryPuzzleApp.ShapeGenerators;
+using PolygonUtility;
+using PolygonUtility.Models;
+using PolygonUtility.PolygonIntersectionCheckUtility;
+using PolygonUtility.Utils;
+
 namespace GeometryPuzzleApp.Test.ShapeGenerator
 {
 	public class RandomShapeGeneratorTest
@@ -6,6 +13,33 @@ namespace GeometryPuzzleApp.Test.ShapeGenerator
 		public RandomShapeGeneratorTest()
 		{
 		}
-	}
+
+		[Fact]
+		public void RandomShapeGenerator_GetPointsOfPolygon_returnsCorrectNumberOfPoints()
+		{
+			RandomShapeGenerator generator = new RandomShapeGenerator();
+			generator.NoOfPoints = 5;
+			var points = generator.GetPointsOfPolygon();
+			var count = points.Count();
+
+			count.Should().Be(5);
+			count.Should().Be(generator.NoOfPoints);
+		}
+
+        [Fact]
+        public void RandomShapeGenerator_GetPointsOfPolygon_returnsValidPolygon()
+        {
+            RandomShapeGenerator generator = new RandomShapeGenerator();
+			generator.NoOfPoints = 5;
+            var points = generator.GetPointsOfPolygon();
+			string print = string.Join(',', points);
+			var lines = PointsToLineSegmentUtil.ConvertToPolygonVertices(points);
+			var newLine = lines.Last();
+			lines.RemoveAt(lines.Count - 1);
+			PolygonIntersectionCheckUtil util = new PolygonIntersectionCheckUtil();
+			var result = util.IsNewLineIntersecting(lines, newLine);
+			result.Should().BeFalse();
+        }
+    }
 }
 

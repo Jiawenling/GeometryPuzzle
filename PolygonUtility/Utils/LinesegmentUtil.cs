@@ -7,49 +7,77 @@ namespace PolygonUtility.Utils
 	public class LinesegmentUtil
 	{
 
-        public Event DoLinesIntersect(LineSegment line1, LineSegment line2)
+        public bool DoLinesIntersect(LineSegment line1, LineSegment line2)
         {
             return CheckIntersect(line1.Start, line1.End, line2.Start, line2.End);
         }
 
-        public Event DoLinesIntersect(Point p1, Point p2, Point p3, Point p4)
+        public bool DoLinesIntersect(Point p1, Point p2, Point p3, Point p4)
         {
             return CheckIntersect(p1, p2, p3, p4);
         }
 
-        private Event CheckIntersect(Point p1, Point p2, Point p3, Point p4)
+        private bool CheckIntersect(Point p1, Point p2, Point p3, Point p4)
         {
             int d1 = GetDirection(p3, p4, p1);
             int d2 = GetDirection(p3, p4, p2);
             int d3 = GetDirection(p1, p2, p3);
             int d4 = GetDirection(p1, p2, p4);
 
-            if (d1 != d2 && d3 != d4) return FindIntersectionPoint(p1,p2,p3,p4);
-
+            if (d1 != d2 && d3 != d4) return true;
+            //return FindIntersectionPoint(p1, p2, p3, p4);
             Event result = null;
-            if (d1 == 0 && IsOnSegment(p3, p4, p1, out result))
+            if (d1 == 0 && IsOnSegment(p3, p4, p1))
             {
-                return result;
+                return true;
             }
 
-            if (d2 == 0 && IsOnSegment(p3, p4, p2, out result))
+            if (d2 == 0 && IsOnSegment(p3, p4, p2))
             {
-                return result;
+                return true;
             }
 
-            if (d3 == 0 && IsOnSegment(p1, p2, p3, out result))
+            if (d3 == 0 && IsOnSegment(p1, p2, p3))
             {
-                return result;
+                return true;
             }
 
-            if (d4 == 0 && IsOnSegment(p1, p2, p4, out result))
+            if (d4 == 0 && IsOnSegment(p1, p2, p4))
             {
-                return result;
+                return true;
             }
 
-            return result;
+            return false;
         }
 
+        public bool CheckIfTwoLinesAreVerticesOfPolygon(LineSegment line1, LineSegment line2)
+        {
+            return IsVerticeWithSameEndPoints(line1, line2) ||
+                IsVerticeWithSameStartPoints(line1, line2) ||
+                AreAdjacentVertices(line1, line2) ||
+                AreAdjacentVertices(line2, line1);
+        }
+
+        private bool IsVerticeWithSameStartPoints(LineSegment line1, LineSegment line2)
+        {
+            return line1.Start.Equals(line2.Start) &&
+                (!IsOnSegment(line1.Start, line1.End, line2.End) &&
+                !IsOnSegment(line2.Start, line2.End, line1.End));
+        }
+
+        private bool IsVerticeWithSameEndPoints(LineSegment line1, LineSegment line2)
+        {
+            return line1.End.Equals(line2.End) &&
+                (!IsOnSegment(line1.Start, line1.End, line2.Start) &&
+                !IsOnSegment(line2.Start, line2.End, line1.Start));
+        }
+
+        private bool AreAdjacentVertices(LineSegment line1, LineSegment line2)
+        {
+            return line1.Start.Equals(line2.End) &&
+                (!IsOnSegment(line1.Start, line1.End, line2.Start)) &&
+                !IsOnSegment(line2.Start, line2.End, line1.End);
+        }
 
         public int GetDirection(Point a, Point b, Point p)
         {
@@ -73,6 +101,14 @@ namespace PolygonUtility.Utils
             return false;
         }
 
+        public bool IsOnSegment(Point p1, Point p2, Point q)
+        {
+            if (q.X <= Math.Max(p1.X, p2.X) && q.X >= Math.Min(p1.X, p2.X) &&
+                q.Y <= Math.Max(p1.Y, p2.Y) && q.Y >= Math.Min(p1.Y, p2.Y))
+                return true;
+            return false;
+        }
+
         public Event FindIntersectionPoint(Point p1, Point p2, Point p3, Point p4)
         {
             bool line1IsVertical = IsVerticalLine(p1, p2);
@@ -81,39 +117,49 @@ namespace PolygonUtility.Utils
             {
                 float g1 = FindGradient(p1, p2);
                 float g2 = FindGradient(p3, p4);
-                float c1 = p1.Y - (g1 * p1.X);
-                float c2 = p3.Y - (g2 * p3.X);
-                float x = (c2 - c1) / (g1 - g2);
-                float y = g1 * x + c1;
+                float c1 = FindXIntercept(p1, g1);
+                float c2 = FindXIntercept(p3, g2);
+                int x = (int)Math.Round((c2 - c1) / (g1 - g2));
+                int y = (int)(g1 * x + c1);
                 return new Event(new Point(x, y, -1), PointType.INTERSECTION, -1);
             }
             else if (line1IsVertical)
             {
                 float g = FindGradient(p3, p4);
-                float c = p3.Y - (g * p3.X);
-                float x = p1.X;
-                float y = g * x + c;
+                float c = FindXIntercept(p3, g);
+                int x = p1.X;
+                int y = (int)Math.Round(g * x + c);
                 return new Event(new Point(x, y, -1), PointType.INTERSECTION, -1);
 
             }
             else
             {
                 float g = FindGradient(p1, p2);
-                float c = p1.Y - (g * p1.X);
-                float x = p3.X;
-                float y = g * x + c;
+                float c = FindXIntercept(p1, g);
+                int x = p3.X;
+                int y = (int)Math.Round(g * x + c);
                 return new Event(new Point(x, y, -1), PointType.INTERSECTION, -1);
             }
         }
 
+        public float FindXIntercept(Point p1, float gradient)
+        {
+            return p1.Y - (gradient * p1.X);
+        }
+
         public float FindGradient(Point p1, Point p2)
         {
-            return (p1.Y - p2.Y) / (p1.X - p2.X);
+            return (float)(p1.Y - p2.Y) / (float)(p1.X - p2.X);
         }
 
         public bool IsVerticalLine(Point p1, Point p2)
         {
             return p1.X == p2.X;
+        }
+
+        public bool PointIsAboveLineSegment(Point p, float gradient, float xIntercept)
+        {
+            return p.Y > (gradient * p.X + xIntercept);
         }
 
     }

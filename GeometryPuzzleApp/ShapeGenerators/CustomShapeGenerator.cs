@@ -18,7 +18,7 @@ namespace GeometryPuzzleApp.ShapeGenerators
             //_util = new PolygonIntersectionCheckUtility();
         }
 
-        public bool AddPoints(float x, float y)
+        public bool AddPoints(int x, int y)
         {
             if (_pointsSet.Contains((x, y))) return false;
             if (_pointsSet.Count <= 2) return true;
@@ -51,8 +51,8 @@ namespace GeometryPuzzleApp.ShapeGenerators
         public bool NewLineIsValid(LineSegment newLine)
         {
             if (_pointsSet.Count < 2) return true;
-            PolygonIntersectionCheckUtil util = new PolygonIntersectionCheckUtil(_lines, newLine);
-            return !util.IsNewLineIntersecting();
+            PolygonIntersectionCheckUtil util = new PolygonIntersectionCheckUtil();
+            return !util.IsNewLineIntersecting(_lines, newLine);
         }
 
         public List<Point> GetPointsOfPolygon()

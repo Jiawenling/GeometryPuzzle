@@ -13,35 +13,75 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
 			_util = new LinesegmentUtil();
 		}
 
-		[Fact]
-		public void IntersectionCheckUtil_IsOnSegment_ReturnsTrueForColinearPoints()
-		{
-			Point p1 = new Point(-2, 1, -1);
-			Point p2 = new Point(2, 5, -1);
-			Point p3 = new Point(1, 4, -1);
-			var result = _util.IsOnSegment(p1, p2, p3, out Event intersectionPoint);
-			result.Should().BeTrue();
-			intersectionPoint.Should().NotBeNull();
-			intersectionPoint.Point.X.Should().Be(p3.X);
-		}
-
         [Fact]
-        public void IntersectionCheckUtil_GetIntersection_ReturnsIntersectionEventOnPolygonVertices()
+        public void LinesegmentUtil_IsOnSegment_ReturnsTrueForColinearPoints()
         {
-            Point p1 = new Point(-4, 6, -1); //line y = -x+1
-            Point p2 = new Point(2, 6, -1);
-            Point p3 = new Point(4, 5, -1); //line y = x+ 3
-			LineSegment l1 = new LineSegment(p1, p2, -1);
-			LineSegment l2 = new LineSegment(p2, p3, -1);
-			Point expected = new Point(2, 6, -1);
-
-			var result = _util.DoLinesIntersect(l1,l2);
-			result.Should().BeOfType<Event>();
-			Assert.Equivalent(expected, result.Point);
+            Point p1 = new Point(-2, 1, -1);
+            Point p2 = new Point(2, 5, -1);
+            Point p3 = new Point(1, 4, -1);
+            var result = _util.IsOnSegment(p1, p2, p3);
+            result.Should().BeTrue();
+            //intersectionPoint.Should().NotBeNull();
+            //intersectionPoint.Point.X.Should().Be(p3.X);
         }
 
-		[Fact]
-        public void IntersectionCheckUtil_GetIntersection_ReturnsIntersectionEvent()
+        [Fact]
+        public void LineSegmentUtil_PointIsAboveLine_returnsExpectedResults()
+        {
+            //(-76.0,51.0), (-50.0,12.0), (8.0,-22.0), (30.0,32.0), (67.0,-79.0)
+            List<Point> points = new List<Point>()
+            {
+                new Point(-76,51,-1),
+                new Point(-50,12, -1),
+                new Point(8,-22,-1),
+                new Point(30, 32,-1),
+                new Point(67,-79,-1)
+            };
+            List<Point> above = new List<Point>();
+            List<Point> below = new List<Point>();
+
+            float grad = _util.FindGradient(points[0], points[4]);
+            float xInt = _util.FindXIntercept(points[0], grad);
+            foreach (Point p in points)
+            {
+                if (p.Equals(points[0]) || p.Equals(points[4])) continue;
+                if (_util.PointIsAboveLineSegment(p, grad, xInt))
+                    above.Add(p);
+                else below.Add(p);
+            }
+
+            above.Count().Should().Be(2);
+            below.Count().Should().Be(1);
+            
+        }
+
+        [Fact]
+        public void LinesegmentUtil_CheckIfTwoLinesAreVerticesOfPolygon_returnsTrueForValidPolygonVertices()
+        {
+            List<Point> points = new List<Point>()
+            {
+                new Point(1,1,-1),
+                new Point(2,2,-1),
+                new Point(3,-1,-1),
+                new Point(4,2,-1),
+                new Point(5,1,-1)
+            };
+            List<LineSegment> lines = PointsToLineSegmentUtil.ConvertToPolygonVertices(points);
+            List<bool> results = new List<bool>()
+            {
+                _util.CheckIfTwoLinesAreVerticesOfPolygon(lines[0], lines[1]),
+                _util.CheckIfTwoLinesAreVerticesOfPolygon(lines[1], lines[2]),
+                _util.CheckIfTwoLinesAreVerticesOfPolygon(lines[2], lines[3]),
+                _util.CheckIfTwoLinesAreVerticesOfPolygon(lines[3], lines[4])
+
+            };
+            results.Should().OnlyContain(x => x == true);
+
+        }
+
+
+        [Fact]
+        public void LinesegmentUtil_GetIntersection_ReturnsIntersectionEvent()
         {
             Point p1 = new Point(-2, 3, -1); //line y = -x+1
             Point p2 = new Point(2, -1, -1);
@@ -50,12 +90,11 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
             Point expected = new Point(-1, 2, -1);
 
             var result = _util.DoLinesIntersect(p1, p2, p3, p4);
-            result.Should().BeOfType<Event>();
-            Assert.Equivalent(expected, result.Point);
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public void IntersectionCheckUtil_GetIntersection_ReturnsNullEventOnNoIntersection()
+        public void LinesegmentUtil_GetIntersection_ReturnsFalseOnNoIntersection()
         {
             Point p1 = new Point(-4, 6, -1); //line y = -x+1
             Point p2 = new Point(2, 6, -1);
@@ -64,21 +103,20 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
             Point expected = new Point(-1, 2, -1);
 
             var result = _util.DoLinesIntersect(p1, p2, p3, p4);
-            result.Should().BeNull();
+            result.Should().BeFalse();
         }
 
         [Fact]
-        public void IntersectionCheckUtil_GetIntersection_ReturnsEventIntersectionWithVerticalLine()
+        public void LinesegmentUtil_GetIntersection_ReturnsTrueIntersectionWithVerticalLine()
         {
-            Point p1 = new Point(-4, 6, -1); //line y = -x+1
+            Point p1 = new Point(-4, 6, -1); 
             Point p2 = new Point(2, 6, -1);
             Point p3 = new Point(2, 6, -1);
             Point p4 = new Point(2, -3, -1);
             Point expected = p2;
 
             var result = _util.DoLinesIntersect(p1, p2, p3, p4);
-            result.Should().BeOfType<Event>();
-            Assert.Equivalent(expected, result.Point);
+            result.Should().BeTrue();
         }
     }
 }

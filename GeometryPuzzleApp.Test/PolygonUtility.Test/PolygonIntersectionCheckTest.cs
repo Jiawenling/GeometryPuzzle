@@ -1,7 +1,9 @@
 ﻿using System;
 using FluentAssertions;
+using PolygonUtility;
 using PolygonUtility.Models;
 using PolygonUtility.PolygonIntersectionCheckUtility;
+using PolygonUtility.Utils;
 
 namespace GeometryPuzzleApp.Test.PolygonUtility.Test
 {
@@ -29,9 +31,9 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
             }
             newLine = new LineSegment(points[count - 1], new Point(6, 3, 4), count - 1);
 
-            var polygonUtil = new PolygonIntersectionCheckUtil(lines, newLine);
+            var polygonUtil = new PolygonIntersectionCheckUtil();
 
-            var result = polygonUtil.IsNewLineIntersecting();
+            var result = polygonUtil.IsNewLineIntersecting(lines, newLine);
 
             result.Should().BeFalse();
         }
@@ -54,9 +56,9 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
             }
             newLine = new LineSegment(points[count - 1], new Point(4,0,4), count - 1);
 
-            var polygonUtil = new PolygonIntersectionCheckUtil(lines, newLine);
+            var polygonUtil = new PolygonIntersectionCheckUtil();
 
-            var result = polygonUtil.IsNewLineIntersecting();
+            var result = polygonUtil.IsNewLineIntersecting(lines, newLine);
 
             result.Should().BeTrue();
         }
@@ -81,9 +83,9 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
             newLine = new LineSegment(points[count - 1], points[0], count - 1);
             //lines.Add(newLine);
 
-            var polygonUtil = new PolygonIntersectionCheckUtil(lines, newLine);
+            var polygonUtil = new PolygonIntersectionCheckUtil();
 
-            var result = polygonUtil.IsNewLineIntersecting();
+            var result = polygonUtil.IsNewLineIntersecting(lines, newLine);
 
             result.Should().BeTrue();
         }
@@ -100,18 +102,13 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
                 new Point(4, 5, 4),
                 new Point(2, 1, 5),
             };
-            lines = new List<LineSegment>();
-            int count = points.Count;
-            for (int i = 0; i < points.Count-1; i++)
-            {
-                lines.Add(new LineSegment(points[i], points[i + 1], i));
-            }
-            newLine = new LineSegment(points[count - 1], points[0], count - 1);
-            //lines.Add(newLine);
 
-            var polygonUtil = new PolygonIntersectionCheckUtil(lines, newLine);
+            var lines = PointsToLineSegmentUtil.ConvertToPolygonVertices(points);
+            var newLine = lines.Last();
+            lines.RemoveAt(lines.Count - 1);
+            var polygonUtil = new PolygonIntersectionCheckUtil();
 
-			var result = polygonUtil.IsNewLineIntersecting();
+			var result = polygonUtil.IsNewLineIntersecting(lines, newLine);
 
 			result.Should().BeFalse();
 		}
