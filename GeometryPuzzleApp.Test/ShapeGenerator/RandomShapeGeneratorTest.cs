@@ -1,6 +1,6 @@
 ﻿using System;
 using FluentAssertions;
-using GeometryPuzzleApp;
+using GeometryPuzzleApp.ShapeGenerators;
 using PolygonUtility;
 using PolygonUtility.Models;
 using PolygonUtility.PolygonIntersectionCheckUtility;

@@ -71,8 +71,7 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
                 new Point(2, 1, 5),
             };
             CheckPointWithinPolygonUtil util = new CheckPointWithinPolygonUtil();
-            List<LineSegment> lines = PointsToLineSegmentUtil.ConvertToPolygonVertices(points);
-            bool result = util.IsPointInPolygon(new Point(4, 4, -1), lines);
+            bool result = util.IsPointInPolygon(new Point(4, 4, -1), points);
             //bool result = util.IsPointInPolygon(new Point(4, 4, -1), points);
             result.Should().BeFalse();
         }

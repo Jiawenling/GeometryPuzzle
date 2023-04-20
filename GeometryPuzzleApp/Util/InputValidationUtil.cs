@@ -20,6 +20,21 @@ namespace GeometryPuzzleApp.Util
 			line = line.Trim();
 			return line == "#";
 		}
+
+        public bool ContinueToGetInputs(int pointNo, bool optionToQuit, out Point? point)
+        {
+            while (true)
+            {
+                point = null;
+                var input = Console.ReadLine();
+                if (input == null) continue;
+
+                if (optionToQuit && IsHexKey(input)) return false;
+                point = GetCoordinates(input, pointNo);
+                if (point == null) continue;
+                else return true;
+            }
+        }
     }
 }
 

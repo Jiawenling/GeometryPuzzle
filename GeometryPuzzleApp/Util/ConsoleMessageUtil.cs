@@ -60,13 +60,21 @@ namespace GeometryPuzzleApp.Util
         {
             Console.WriteLine("\r\nYour random shape is");
             PrintPoints(points);
-            PromptForTestOrQuit();
+            //PromptForTestOrQuit();
         }
 
         public void InvalidCoordinates(int x, int y)
         {
             Console.WriteLine($"\r\nNew coordinates({x},{y}) is invalid!!");
             Console.WriteLine("Not adding new coordinate to the current shape\r\n");
+        }
+
+        public void AnswerToPuzzle(Point point, string finalShapePoints, bool pointIsWithin)
+        {
+            Console.WriteLine(finalShapePoints);
+            if (pointIsWithin) PointWithinShape(point.X, point.Y);
+            else PointOutsideOfShape(point.X, point.Y);
+            PromptForTestOrQuit();
         }
 
         public void PointOutsideOfShape(int x, int y)

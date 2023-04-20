@@ -34,5 +34,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PolygonUtility\PolygonUtility.csproj" />
+    <ProjectReference Include="..\GeometryPuzzleApp\GeometryPuzzleApp.csproj" />
   </ItemGroup>
 </Project>

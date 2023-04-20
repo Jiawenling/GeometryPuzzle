@@ -12,6 +12,8 @@ namespace GeometryPuzzleApp.RunMode
 		private ConsoleMessageUtil _messageUtil;
         private ProcessInputUtil _inputUtil;
         private CheckPointWithinPolygonUtil _pointWithinUtil;
+        private int _pointNo;
+        private string _finalShapePoints;
 
         public CustomShapeRunMode(ICustomShapeGenerator shapeGenerator, ConsoleMessageUtil messageUtil, ProcessInputUtil inputUtil, CheckPointWithinPolygonUtil pointWithinUtil)
 		{
@@ -19,43 +21,41 @@ namespace GeometryPuzzleApp.RunMode
 			_messageUtil = messageUtil;
             _inputUtil = inputUtil;
             _pointWithinUtil = pointWithinUtil;
-		}
+            _pointNo = 1;
+            _finalShapePoints = "";
+        }
 
         public void Start()
         {
-            int pointNo = 1;
             while (!_shapeGenerator.IsCompleteShape())
             {
-                _messageUtil.PromptForInput(pointNo);
-                Point? p = GetCoordinates(pointNo, false);
-                if (p == null) continue;
-                if (!_shapeGenerator.AddPoints(p.X, p.Y)) _messageUtil.InvalidCoordinates(p.X, p.Y);
-                else pointNo += 1;
+                _messageUtil.PromptForInput(_pointNo);
+                if (!_inputUtil.ContinueToGetInputs(_pointNo, false, out Point p)) continue;
+                TryAddPoint(p);
                 List<Point> points1 = _shapeGenerator.GetPointsOfPolygon();
                 _messageUtil.ShapeCompleteOrIncomplete(points1);
             }
 
             while (true)
             {
-                _messageUtil.PromptForCompleteOrInput(pointNo);
-                Point? p = GetCoordinates(pointNo, true);
-                if (p == null) break;
-                if (!_shapeGenerator.AddPoints(p.X, p.Y)) _messageUtil.InvalidCoordinates(p.X, p.Y);
-                else pointNo+= 1;
+                _messageUtil.PromptForCompleteOrInput(_pointNo);
+                if (!_inputUtil.ContinueToGetInputs(_pointNo, true, out Point p)) break;
+                TryAddPoint(p);
                 List<Point> points2 = _shapeGenerator.GetPointsOfPolygon();
                 _messageUtil.ShapeComplete(points2);
             }
 
             List<Point> points = _shapeGenerator.GetPointsOfPolygon();
-            var message = _messageUtil.ShapeFinalized(points);
-            Console.WriteLine(message);
+            _finalShapePoints = _messageUtil.ShapeFinalized(points);
+            
+            Console.WriteLine(_finalShapePoints);
             _messageUtil.PromptForTestOrQuit();
 
             while (true)
             {
-                Point? point = GetCoordinates(-1, true);
-                if (point == null) break;
-                AnswerToPuzzle(point, message);
+                if (!_inputUtil.ContinueToGetInputs(-1, true, out Point point)) break;
+                bool pointIsWithin = CheckPointWithin(point);
+                _messageUtil.AnswerToPuzzle(point, _finalShapePoints, pointIsWithin);
             }
 
             _messageUtil.EndingMessage();
@@ -67,27 +67,15 @@ namespace GeometryPuzzleApp.RunMode
             return _pointWithinUtil.IsPointInPolygon(point, points);
         }
 
-        private void AnswerToPuzzle(Point point, string message)
+        private void TryAddPoint(Point p)
         {
-            Console.WriteLine(message);
-            if (CheckPointWithin(point)) _messageUtil.PointWithinShape(point.X, point.Y);
-            else _messageUtil.PointOutsideOfShape(point.X, point.Y);
-            _messageUtil.PromptForTestOrQuit();
+            if (!_shapeGenerator.AddPoints(p.X, p.Y)) _messageUtil.InvalidCoordinates(p.X, p.Y);
+            else _pointNo += 1;
         }
 
-        private Point? GetCoordinates(int pointNo, bool optionToQuit)
-        {
-            while (true)
-            {
-                var input = Console.ReadLine();
-                if (input == null) continue;
 
-                if (optionToQuit && _inputUtil.IsHexKey(input)) return null;
-                Point? point = _inputUtil.GetCoordinates(input, pointNo);
-                if (point == null) continue;
-                else return point;
-            }
-        }
+
+
     }
 }
 

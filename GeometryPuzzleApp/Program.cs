@@ -29,11 +29,14 @@ void ChooseMode()
                 var shapeGenerator = new CustomShapeGenerator();
                 runMode = new CustomShapeRunMode(shapeGenerator, messageUtil, inputUtil, checkPointUtil);
                 runMode.Start();
+                break;
             }
             else if (option == 2)
             {
-                //runMode = new RandomShapeGenerator();
-                //runMode.Start();
+                var shapeGenerator = new RandomShapeGenerator();
+                runMode = new RandomShapeRunMode(shapeGenerator, messageUtil, inputUtil, checkPointUtil);
+                runMode.Start();
+                break;
             }
             else messageUtil.NotAValidInput();
         }
