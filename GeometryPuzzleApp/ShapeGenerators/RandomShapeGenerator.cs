@@ -8,7 +8,7 @@ using PolygonUtility.PolygonIntersectionCheckUtility;
 
 namespace GeometryPuzzleApp.ShapeGenerators
 {
-    public class RandomShapeGenerator : IShapeGenerator
+    public class RandomShapeGenerator : IRandomShapeGenerator
     {
         public int NoOfPoints { get; set; }
         private Random _random;
@@ -42,9 +42,6 @@ namespace GeometryPuzzleApp.ShapeGenerators
                 else belowLine.Add(point);
             }
             List<Point> result = new List<Point>();
-            //aboveLine.Sort(comparer);
-            //belowLine.Sort(comparer);
-
             result.Add(leftMax);
             result.AddRange(aboveLine); // add points from above in ascending order
             result.Add(rightMax);
@@ -53,17 +50,7 @@ namespace GeometryPuzzleApp.ShapeGenerators
             {
                 result.Add(belowLine[i]);
             }
-            //if (PolygonIsValid(result)) return result;
-            //else return GetPointsOfPolygon();
             return result;
-        }
-
-        private bool PolygonIsValid(List<Point> result)
-        {
-            List<LineSegment> lines = PointsToLineSegmentUtil.ConvertToPolygonVertices(result);
-            var newLine = lines.Last();
-            lines.RemoveAt(lines.Count-1);
-            return !_polygonUtil.IsNewLineIntersecting(lines, newLine);
         }
 
         public List<Point> GeneratePoints()

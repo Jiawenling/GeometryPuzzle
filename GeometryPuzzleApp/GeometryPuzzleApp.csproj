@@ -10,12 +10,14 @@
   <ItemGroup>
     <None Remove="Interfaces\" />
     <None Remove="ShapeGenerators\" />
-    <None Remove="Models\" />
+    <None Remove="Util\" />
+    <None Remove="RunMode\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interfaces\" />
     <Folder Include="ShapeGenerators\" />
-    <Folder Include="Models\" />
+    <Folder Include="Util\" />
+    <Folder Include="RunMode\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PolygonUtility\PolygonUtility.csproj" />
