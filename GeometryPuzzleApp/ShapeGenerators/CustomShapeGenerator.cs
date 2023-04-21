@@ -29,6 +29,7 @@ namespace GeometryPuzzleApp.ShapeGenerators
             {
                 _points.Add(newPoint);
                 _pointsSet.Add(((float)x,(float)y));
+                _currentCoordinate += 1;
                 return true;
             }
 
