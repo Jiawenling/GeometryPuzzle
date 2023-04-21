@@ -24,23 +24,30 @@ namespace GeometryPuzzleApp.ShapeGenerators
         {
             if (_pointsSet.Contains((x, y))) return false;
             var newPoint = new Point(x, y, _currentCoordinate);
+
             if (!_pointsSet.Any())
             {
-                AddNewValidPoint(newPoint, null);
+                _points.Add(newPoint);
+                _pointsSet.Add(((float)x,(float)y));
                 return true;
             }
 
-            var newLine = GetNewLineSegment(newPoint);
             if (_pointsSet.Count == 1)
             {
+                var newLine = GetNewLineSegment(newPoint);
                 AddNewValidPoint(newPoint, newLine);
                 return true;
             }
 
-            if (!NewLineIsValid(newLine)) return false;
-
-            AddNewValidPoint(newPoint, newLine);
+            var newL = GetNewLineSegment(newPoint);
+            if (!NewLineIsValid(newL)) return false;
+            AddNewValidPoint(newPoint, newL);
             return true;
+        }
+
+        public bool IsPointOfPolygon(Point point)
+        {
+            return _pointsSet.Contains((point.X,point.Y));
         }
 
         public bool NewLineIsValid(LineSegment newLine)
@@ -49,27 +56,41 @@ namespace GeometryPuzzleApp.ShapeGenerators
             return !_util.IsNewLineIntersecting(_lines, newLine);
         }
 
+        public bool LastLineIsValid()
+        {
+            LineSegment lastLine = GetLineConnectingFirstAndLastPoint();
+            return NewLineIsValid(lastLine);
+        }
+
         public List<Point> GetPointsOfPolygon()
         {
             return _points;
         }
 
-        public bool IsCompleteShape()
+        public bool IsValidAndCompleteShape()
         {
-            return _points.Count >= 3;
+            if (_points.Count < 3) return false;
+            var firstItem = _points.First();
+            return !_points.All(p => p.X.Equals(firstItem.X)) &&
+                    !_points.All(w => w.Y.Equals(firstItem.Y));
         }
 
         private void AddNewValidPoint(Point newPoint, LineSegment newLine)
         {
             _pointsSet.Add((newPoint.X, newPoint.Y));
             _points.Add(newPoint);
-            if(newLine!=null) _lines.Add(newLine);
+            _lines.Add(newLine);
             _currentCoordinate += 1;
         }
 
         private LineSegment GetNewLineSegment(Point point)
         {
             return new LineSegment(point, _points.Last(), _points.Count);
+        }
+
+        private LineSegment GetLineConnectingFirstAndLastPoint()
+        {
+            return new LineSegment(_points.First(), _points.Last(), _points.Count);
         }
     }
 

@@ -26,6 +26,18 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
         }
 
         [Fact]
+        public void LinesegmentUtil_IsOnSegment_ReturnsFalseForPointsOfRightAngledTriangle()
+        {
+            Point p1 = new Point(1, 1, -1);
+            Point p2 = new Point(5, 5, -1);
+            Point p3 = new Point(5, 1, -1);
+            var result = _util.IsOnSegment(p1, p2, p3);
+            result.Should().BeFalse();
+            //intersectionPoint.Should().NotBeNull();
+            //intersectionPoint.Point.X.Should().Be(p3.X);
+        }
+
+        [Fact]
         public void LineSegmentUtil_PointIsAboveLine_returnsExpectedResults()
         {
             //(-76.0,51.0), (-50.0,12.0), (8.0,-22.0), (30.0,32.0), (67.0,-79.0)
@@ -56,7 +68,7 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
         }
 
         [Fact]
-        public void LinesegmentUtil_CheckIfTwoLinesAreVerticesOfPolygon_returnsTrueForValidPolygonVertices()
+        public void LinesegmentUtil_CheckIfVerticesSelfIntersectPolygon_returnsFalseForValidPolygonVertices()
         {
             List<Point> points = new List<Point>()
             {
@@ -69,13 +81,13 @@ namespace GeometryPuzzleApp.Test.PolygonUtility.Test
             List<LineSegment> lines = PointsToLineSegmentUtil.ConvertToPolygonVertices(points);
             List<bool> results = new List<bool>()
             {
-                _util.CheckIfTwoLinesAreVerticesOfPolygon(lines[0], lines[1]),
-                _util.CheckIfTwoLinesAreVerticesOfPolygon(lines[1], lines[2]),
-                _util.CheckIfTwoLinesAreVerticesOfPolygon(lines[2], lines[3]),
-                _util.CheckIfTwoLinesAreVerticesOfPolygon(lines[3], lines[4])
+                _util.CheckIfVerticesSelfIntersect(lines[0], lines[1]),
+                _util.CheckIfVerticesSelfIntersect(lines[1], lines[2]),
+                _util.CheckIfVerticesSelfIntersect(lines[2], lines[3]),
+                _util.CheckIfVerticesSelfIntersect(lines[3], lines[4])
 
             };
-            results.Should().OnlyContain(x => x == true);
+            results.Should().OnlyContain(x => x == false);
 
         }
 

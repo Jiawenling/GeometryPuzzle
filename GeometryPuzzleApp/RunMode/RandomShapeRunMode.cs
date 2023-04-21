@@ -41,6 +41,7 @@ namespace GeometryPuzzleApp.RunMode
         public bool CheckPointWithin(Point point)
         {
             List<Point> points = _shapeGenerator.GetPointsOfPolygon();
+            if (_shapeGenerator.IsPointOfPolygon(point)) return false;
             return _pointWithinUtil.IsPointInPolygon(point, points);
         }
     }

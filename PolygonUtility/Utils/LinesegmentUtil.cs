@@ -26,7 +26,6 @@ namespace PolygonUtility.Utils
 
             if (d1 != d2 && d3 != d4) return true;
             //return FindIntersectionPoint(p1, p2, p3, p4);
-            Event result = null;
             if (d1 == 0 && IsOnSegment(p3, p4, p1))
             {
                 return true;
@@ -50,33 +49,41 @@ namespace PolygonUtility.Utils
             return false;
         }
 
-        public bool CheckIfTwoLinesAreVerticesOfPolygon(LineSegment line1, LineSegment line2)
+        public bool CheckIfLinesAreVertices(LineSegment line1, LineSegment line2)
         {
-            return IsVerticeWithSameEndPoints(line1, line2) ||
-                IsVerticeWithSameStartPoints(line1, line2) ||
-                AreAdjacentVertices(line1, line2) ||
-                AreAdjacentVertices(line2, line1);
+            return line1.Start.Equals(line2.Start) ||
+            line1.End.Equals(line2.End) ||
+            line1.Start.Equals(line2.End) ||
+            line2.Start.Equals(line1.End);
         }
 
-        private bool IsVerticeWithSameStartPoints(LineSegment line1, LineSegment line2)
+        public bool CheckIfVerticesSelfIntersect(LineSegment line1, LineSegment line2)
+        {
+            return VerticeWithSameStartPointsIntersects(line1, line2) ||
+                VerticeWithSameEndPointsIntersects(line1, line2) ||
+                AdjacentVerticesIntersects(line1, line2) ||
+                AdjacentVerticesIntersects(line2, line1); 
+        }
+
+        private bool VerticeWithSameStartPointsIntersects(LineSegment line1, LineSegment line2)
         {
             return line1.Start.Equals(line2.Start) &&
-                (!IsOnSegment(line1.Start, line1.End, line2.End) &&
-                !IsOnSegment(line2.Start, line2.End, line1.End));
+                (IsOnSegment(line1.Start, line1.End, line2.End) ||
+                IsOnSegment(line2.Start, line2.End, line1.End));
         }
 
-        private bool IsVerticeWithSameEndPoints(LineSegment line1, LineSegment line2)
+        private bool VerticeWithSameEndPointsIntersects(LineSegment line1, LineSegment line2)
         {
             return line1.End.Equals(line2.End) &&
-                (!IsOnSegment(line1.Start, line1.End, line2.Start) &&
-                !IsOnSegment(line2.Start, line2.End, line1.Start));
+                (IsOnSegment(line1.Start, line1.End, line2.Start) ||
+                IsOnSegment(line2.Start, line2.End, line1.Start));
         }
 
-        private bool AreAdjacentVertices(LineSegment line1, LineSegment line2)
+        private bool AdjacentVerticesIntersects(LineSegment line1, LineSegment line2)
         {
             return line1.Start.Equals(line2.End) &&
-                (!IsOnSegment(line1.Start, line1.End, line2.Start)) &&
-                !IsOnSegment(line2.Start, line2.End, line1.End);
+                (IsOnSegment(line1.Start, line1.End, line2.Start)) ||
+                IsOnSegment(line2.Start, line2.End, line1.End);
         }
 
         public int GetDirection(Point a, Point b, Point p)
@@ -101,13 +108,45 @@ namespace PolygonUtility.Utils
             return false;
         }
 
+
         public bool IsOnSegment(Point p1, Point p2, Point q)
         {
+            if (q.X == p1.X || q.X == p2.X || q.Y == p1.Y || q.Y == p2.Y)
+                if (IsRightAngledTriangle(p1, p2, q)) return false;
             if (q.X <= Math.Max(p1.X, p2.X) && q.X >= Math.Min(p1.X, p2.X) &&
                 q.Y <= Math.Max(p1.Y, p2.Y) && q.Y >= Math.Min(p1.Y, p2.Y))
                 return true;
             return false;
         }
+
+        public bool IsRightAngledTriangle(Point p1, Point p2, Point q)
+        {
+            return (FindDistance(p1, p2) - FindDistance(p1, q) - FindDistance(p2, q)) < 0.01;
+        }
+
+        public double FindDistance(Point point1, Point point2)
+        {
+            return Math.Sqrt(Math.Pow(point2.X - point1.X, 2) + Math.Pow(point2.Y - point1.Y, 2));
+        }
+
+        //public bool IsOnSegment(Point pt1, Point pt2, Point pt, double epsilon = 0.001)
+        //{
+        //    if (pt.X - Math.Max(pt1.X, pt2.X) > epsilon ||
+        //    Math.Min(pt1.X, pt2.X) - pt.X > epsilon ||
+        //    pt.Y - Math.Max(pt1.Y, pt2.Y) > epsilon ||
+        //    Math.Min(pt1.Y, pt2.Y) - pt.Y > epsilon)
+        //                return false;
+
+        //    if (Math.Abs(pt2.X - pt1.X) < epsilon)
+        //        return Math.Abs(pt1.X - pt.X) < epsilon || Math.Abs(pt2.X - pt.X) < epsilon;
+        //    if (Math.Abs(pt2.Y - pt1.Y) < epsilon)
+        //        return Math.Abs(pt1.Y - pt.Y) < epsilon || Math.Abs(pt2.Y - pt.Y) < epsilon;
+
+        //    double x = pt1.X + (pt.Y - pt1.Y) * (pt2.X - pt1.X) / (pt2.Y - pt1.Y);
+        //    double y = pt1.Y + (pt.X - pt1.X) * (pt2.Y - pt1.Y) / (pt2.X - pt1.X);
+
+        //    return Math.Abs(pt.X - x) < epsilon || Math.Abs(pt.Y - y) < epsilon;
+        //}
 
         public Event FindIntersectionPoint(Point p1, Point p2, Point p3, Point p4)
         {

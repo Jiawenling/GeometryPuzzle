@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using GeometryPuzzleApp.Interfaces;
 using PolygonUtility.Models;
 using PolygonUtility.Utils;
-using System.Linq;
 using PolygonUtility.PolygonIntersectionCheckUtility;
+using System.Configuration;
 
 namespace GeometryPuzzleApp.ShapeGenerators
 {
@@ -14,6 +14,11 @@ namespace GeometryPuzzleApp.ShapeGenerators
         private Random _random;
         private LinesegmentUtil _linesegmentUtil;
         private PolygonIntersectionCheckUtil _polygonUtil;
+        private const string EXCLUSIVEMAXVALUE_KEY = "ExclusiveMaxValue";
+        private const string INCLUSIVEMINVALUE_KEY = "InclusiveMinValue";
+        private int _exclusiveMax;
+        private int _inclusiveMin;
+        private HashSet<(int, int)> _pointsSet;
 
         public RandomShapeGenerator()
         {
@@ -21,6 +26,15 @@ namespace GeometryPuzzleApp.ShapeGenerators
             NoOfPoints = _random.Next(3, 9);
             _linesegmentUtil = new LinesegmentUtil();
             _polygonUtil = new PolygonIntersectionCheckUtil();
+            if (GetLimitsOfRandomNumberGeneration(EXCLUSIVEMAXVALUE_KEY, out int maxValue))
+                _exclusiveMax = maxValue;
+            if (GetLimitsOfRandomNumberGeneration(INCLUSIVEMINVALUE_KEY, out int minValue))
+                _inclusiveMin = minValue;
+            if(_inclusiveMin >= _exclusiveMax || _exclusiveMax - _inclusiveMin < 10)
+            {
+                _exclusiveMax = 100;
+                _inclusiveMin = -100;
+            }
         }
 
         public List<Point> GetPointsOfPolygon()
@@ -50,25 +64,44 @@ namespace GeometryPuzzleApp.ShapeGenerators
             {
                 result.Add(belowLine[i]);
             }
+            string print = string.Join(',', result);
+            if (_polygonUtil.IsPolygonSelfIntersecting(result))
+            {
+                _polygonUtil.ResetUtil();
+                return GetPointsOfPolygon();
+            }
             return result;
         }
 
         public List<Point> GeneratePoints()
         {
             List<Point> points = new List<Point>();
-            HashSet<(int, int)> pointsSet = new HashSet<(int, int)>();
+            _pointsSet = new HashSet<(int, int)>();
             int pointNo = 0;
             while (points.Count != NoOfPoints)
             {
-                int x = _random.Next(-100,100);
-                int y = _random.Next(-100,100);
-                if (pointsSet.Add((x, y)))
+                int x = _random.Next(_inclusiveMin,_exclusiveMax);
+                int y = _random.Next(_inclusiveMin,_exclusiveMax);
+                if (_pointsSet.Add((x, y)))
                 {
                     points.Add(new Point(x, y, pointNo));
                     pointNo += 1;
                 }
             }
             return points;
+        }
+
+        private bool GetLimitsOfRandomNumberGeneration(string key, out int result)
+        {
+            string a = ConfigurationManager.AppSettings.Get(key);
+            if (int.TryParse(a, out result)) return true;
+            return false;
+        }
+
+        public bool IsPointOfPolygon(Point point)
+        {
+            return _pointsSet.Contains((point.X, point.Y));
+
         }
     }
 }

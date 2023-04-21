@@ -3,7 +3,7 @@ namespace PolygonUtility.Models
 {
 	public class LineSegmentComparer: Comparer<LineSegment>
 	{
-        public override int Compare(LineSegment A, LineSegment B)
+        public override int Compare(LineSegment? A, LineSegment? B)
         {
             Point a = A.Start;
             Point b = B.Start;

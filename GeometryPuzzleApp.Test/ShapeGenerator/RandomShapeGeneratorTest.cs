@@ -30,14 +30,10 @@ namespace GeometryPuzzleApp.Test.ShapeGenerator
         public void RandomShapeGenerator_GetPointsOfPolygon_returnsValidPolygon()
         {
             RandomShapeGenerator generator = new RandomShapeGenerator();
-			generator.NoOfPoints = 5;
+			generator.NoOfPoints = 8;
             var points = generator.GetPointsOfPolygon();
-			string print = string.Join(',', points);
-			var lines = PointsToLineSegmentUtil.ConvertToPolygonVertices(points);
-			var newLine = lines.Last();
-			lines.RemoveAt(lines.Count - 1);
 			PolygonIntersectionCheckUtil util = new PolygonIntersectionCheckUtil();
-			var result = util.IsNewLineIntersecting(lines, newLine);
+			var result = util.IsPolygonSelfIntersecting(points);
 			result.Should().BeFalse();
         }
     }

@@ -27,13 +27,15 @@ namespace GeometryPuzzleApp.RunMode
 
         public void Start()
         {
-            while (!_shapeGenerator.IsCompleteShape())
+            bool shapeIsValidAndComplete = false;
+            while (!shapeIsValidAndComplete)
             {
                 _messageUtil.PromptForInput(_pointNo);
                 if (!_inputUtil.ContinueToGetInputs(_pointNo, false, out Point p)) continue;
                 TryAddPoint(p);
                 List<Point> points1 = _shapeGenerator.GetPointsOfPolygon();
-                _messageUtil.ShapeCompleteOrIncomplete(points1);
+                shapeIsValidAndComplete = _shapeGenerator.IsValidAndCompleteShape();
+                _messageUtil.ShapeCompleteOrIncomplete(points1, shapeIsValidAndComplete);
             }
 
             while (true)
@@ -64,6 +66,7 @@ namespace GeometryPuzzleApp.RunMode
         public bool CheckPointWithin(Point point)
         {
             List<Point> points = _shapeGenerator.GetPointsOfPolygon();
+            if (_shapeGenerator.IsPointOfPolygon(point)) return false;
             return _pointWithinUtil.IsPointInPolygon(point, points);
         }
 

@@ -26,7 +26,8 @@ namespace GeometryPuzzleApp.Test.ShapeGenerator
 		[Fact]
 		public void CustomShapeGenerator_AddPoints_ReturnsFalseOnIntersectingCoordinates()
 		{
-			_customShape.AddPoints(5, 1);
+            _customShape.AddPoints(1, 1);
+            _customShape.AddPoints(5, 1);
 			_customShape.AddPoints(5, 5);
 			var result = _customShape.AddPoints(4, 0);
 			result.Should().BeFalse();

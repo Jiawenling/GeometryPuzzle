@@ -25,9 +25,9 @@ namespace GeometryPuzzleApp.Util
         public void PromptForTestOrQuit()=>
             Console.WriteLine("\r\nPlease key in test coordinates in x y format or enter # to quit the game\r\n");
 
-        public void ShapeCompleteOrIncomplete(List<Point> points)
+        public void ShapeCompleteOrIncomplete(List<Point> points, bool isValidAndComplete)
         {
-            if (points.Count < 3) ShapeIncomplete(points);
+            if (!isValidAndComplete) ShapeIncomplete(points);
             else ShapeComplete(points);
         }
 
@@ -44,6 +44,8 @@ namespace GeometryPuzzleApp.Util
             PrintPoints(points);
 			//PromptForCompleteOrInput(points.Count);
         }
+
+        public void LastLineInvalid() => Console.WriteLine("\r\nThe last line connecting first and last points does not form a valid polygon. Please input another coordinate.");
 
         public string ShapeFinalized(List<Point> points)
         {

@@ -7,7 +7,8 @@ namespace GeometryPuzzleApp.Interfaces
 	{
 		bool AddPoints(int x, int y);
 		bool NewLineIsValid(LineSegment newLine);
-		bool IsCompleteShape();
+        bool LastLineIsValid();
+        bool IsValidAndCompleteShape();
     }
 }
 

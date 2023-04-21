@@ -4,7 +4,7 @@ namespace PolygonUtility.Models
 	public class EventComparer: IComparer<Event>
 	{
 
-        public int Compare(Event p, Event q)
+        public int Compare(Event? p, Event? q)
         {
             Point a = p.Point;
             Point b = q.Point;
