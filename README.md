@@ -105,10 +105,10 @@ A corresponding shape generator will be initialised and passed to the runmode. T
 
 This is solved using a modified version of the Bentley-Ottman algorithm, which is a more efficient algorithm to check if numerous lines are intersecting (as opposed to checking every pair of lines)
 
-The process will check if the line under consideration is a vertice and if vertices self-intersect.
+The process will check if the line under consideration forms a valid edge and if vertices self-intersect.
 Otherwise, it will proceed to check if line intersects with lines directly above or below
 
-### Considerations for the custom shape generator:
+### Considerations for the random shape generator:
 - How to ensure randomly generated coordinates will not form a self intersecting polygon?
 
 This is solved by ordering. 
