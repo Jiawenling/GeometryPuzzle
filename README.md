@@ -101,11 +101,11 @@ A corresponding shape generator will be initialised and passed to the runmode. T
 ### Considerations for the custom shape generator:
 
 - Is new line intersecting existing lines or final polygon is self-intersecting?
-- Are these valid intersections? i.e edges of a polygon
+- Are these valid intersections? i.e adjacent edges of a polygon
 
 This is solved using a modified version of the Bentley-Ottman algorithm, which is a more efficient algorithm to check if numerous lines are intersecting (as opposed to checking every pair of lines)
 
-The process will check if the line under consideration forms a valid edge and if vertices self-intersect.
+The process will check if the line under consideration forms a vertice with an existing edge and if this edge forms a self-intersecting polygon.
 Otherwise, it will proceed to check if line intersects with lines directly above or below
 
 ### Considerations for the random shape generator:
